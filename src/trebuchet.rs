@@ -65,11 +65,14 @@ fn find_first_digit(data: &str, num_map: &HashMap<&str, u8>) -> u8 {
             return ch.to_digit(10).unwrap() as u8;
         }
         for (key, val) in num_map {
-            if i + key.len() > data.len() {
-                continue;
-            }
-            if &data[i..i + key.len()] == *key {
-                return *val;
+            let data_slice = data.get(i..(i + key.len()));
+            match data_slice {
+                None => continue,
+                Some(s) => {
+                    if s == *key {
+                        return *val;
+                    }
+                }
             }
         }
     }
@@ -81,15 +84,20 @@ fn find_last_digit(data: &str, num_map: &HashMap<&str, u8>) -> u8 {
         if ch.is_ascii_digit() {
             return ch.to_digit(10).unwrap() as u8;
         }
+        let curr_pos = data.len() - i - 1;
         for (key, val) in num_map {
-            let curr_pos = data.len() - i - 1;
             if key.len() > curr_pos {
                 continue;
             }
             let start_idx = curr_pos - key.len() + 1;
-            let sub_str = &data[start_idx..(curr_pos + 1)];
-            if sub_str == *key {
-                return *val;
+            let data_slice = data.get(start_idx..(curr_pos + 1));
+            match data_slice {
+                None => continue,
+                Some(s) => {
+                    if s == *key {
+                        return *val;
+                    }
+                }
             }
         }
     }
