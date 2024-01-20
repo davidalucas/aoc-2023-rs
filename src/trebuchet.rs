@@ -68,7 +68,7 @@ fn find_first_digit(data: &str, num_map: &HashMap<&str, u8>) -> u8 {
             if i + key.len() > data.len() {
                 continue;
             }
-            if &data[i..key.len()] == *key {
+            if &data[i..i + key.len()] == *key {
                 return *val;
             }
         }
@@ -94,6 +94,22 @@ fn find_last_digit(data: &str, num_map: &HashMap<&str, u8>) -> u8 {
         }
     }
     0
+}
+
+/// Performs the digit summation described in the Day 1 Part 2 problem.
+pub fn sum_digits_enhanced(path: &str) -> u64 {
+    let mut sum: u64 = 0;
+
+    if let Ok(file) = File::open(path) {
+        for line in BufReader::new(file).lines() {
+            match line {
+                Ok(data) => sum += parse_digits_enhanced(&data) as u64,
+                Err(err) => panic!("{}", err),
+            }
+        }
+    }
+
+    sum
 }
 
 #[cfg(test)]
@@ -144,7 +160,14 @@ mod tests {
 
     #[test]
     fn parse_digits_enhanced_returns_expected_integer() {
-        let result = parse_digits_enhanced("two1nine");
-        assert_eq!(result, 29);
+        let result_map: HashMap<&str, u8> = HashMap::from([
+            ("two1nine", 29),
+            ("eightwothree", 83),
+            ("abcone2threexyz", 13),
+        ]);
+        for (input, expected) in result_map {
+            let actual = parse_digits_enhanced(input);
+            assert_eq!(actual, expected);
+        }
     }
 }
