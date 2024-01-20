@@ -1,3 +1,8 @@
+use std::{
+    fs::File,
+    io::{BufRead, BufReader},
+};
+
 /// Gets the first and last digit out of the provided string, returning them pushed together as a
 /// single, two-digit number.
 fn parse_digits(data: &str) -> u8 {
@@ -18,6 +23,22 @@ fn parse_digits(data: &str) -> u8 {
     first_digit * 10 + second_digit
 }
 
+/// Performs the digit summation described in the Day 1 Part 1 problem.
+pub fn sum_digits(path: &str) -> u64 {
+    let mut sum: u64 = 0;
+
+    if let Ok(file) = File::open(path) {
+        for line in BufReader::new(file).lines() {
+            match line {
+                Ok(data) => sum += parse_digits(&data) as u64,
+                Err(err) => panic!("{}", err),
+            }
+        }
+    }
+
+    sum
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -26,5 +47,17 @@ mod tests {
     fn parse_digits_returns_expected_integer() {
         let result = parse_digits("two1nine");
         assert_eq!(result, 11);
+    }
+
+    #[test]
+    fn sum_digits_returns_expected_result_for_example() {
+        let result = sum_digits("./src/day_1/example.txt");
+        assert_eq!(result, 142);
+    }
+
+    #[test]
+    fn sum_digits_returns_expected_result_for_data() {
+        let result = sum_digits("./src/day_1/data.txt");
+        assert_eq!(result, 55477);
     }
 }
