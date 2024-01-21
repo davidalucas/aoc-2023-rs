@@ -24,14 +24,14 @@ pub fn sum_valid_games(path: &str, color_limits: HashMap<&str, u16>) -> Result<u
 
 fn game_is_valid(data: String, color_limits: &HashMap<&str, u16>) -> bool {
     let trimmed_data = data.split(": ").collect::<Vec<_>>(); // ["Game 1", "3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green"]
-    let reveals = trimmed_data.get(1).unwrap().split("; ").collect::<Vec<_>>(); // ["3 blue, 4 red", "1 red, 2 green, 6 blue", "2 green"]
+    let reveals = trimmed_data[1].split("; ").collect::<Vec<_>>(); // ["3 blue, 4 red", "1 red, 2 green, 6 blue", "2 green"]
 
     for reveal in reveals {
         let cube_sums = reveal.split(", ").collect::<Vec<_>>(); // ["3 blue", "4 red"]
         for cube_data in cube_sums {
             let color_data = cube_data.split(' ').collect::<Vec<_>>(); // ["3", "blue"]
-            let color_count = color_data.get(0).unwrap().parse::<u16>().unwrap(); // 3
-            if color_count > *color_limits.get(color_data[1]).unwrap() {
+            let color_count = color_data[0].parse::<u16>().unwrap(); // 3
+            if color_count > color_limits[color_data[1]] {
                 return false;
             }
         }
