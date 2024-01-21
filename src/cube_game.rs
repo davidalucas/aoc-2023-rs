@@ -40,6 +40,39 @@ fn game_is_valid(data: String, color_limits: &HashMap<&str, u16>) -> bool {
     true
 }
 
+pub fn sum_game_powers(path: &str) -> Result<usize> {
+    let mut sum = 0;
+
+    let file = File::open(path)?;
+    for line in BufReader::new(file).lines() {
+        match line {
+            Err(err) => return Err(err),
+            Ok(l) => sum += calc_power(l),
+        }
+    }
+
+    Ok(sum)
+}
+
+fn calc_power(data: String) -> usize {
+    let mut min_colors = HashMap::from([("red", 0), ("green", 0), ("blue", 0)]);
+    let trimmed_data = data.split(": ").collect::<Vec<_>>();
+    let reveals = trimmed_data[1].split("; ").collect::<Vec<_>>();
+
+    for reveal in reveals {
+        let cube_sums = reveal.split(", ").collect::<Vec<_>>();
+        for cube_data in cube_sums {
+            let color_data = cube_data.split(' ').collect::<Vec<_>>(); // ["3", "blue"]
+            let color_count = color_data[0].parse().unwrap(); // 3
+            if color_count > min_colors[color_data[1]] {
+                min_colors.insert(color_data[1], color_count);
+            }
+        }
+    }
+
+    min_colors.values().product()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -66,5 +99,18 @@ mod tests {
         );
 
         assert_eq!(result, false);
+    }
+
+    #[test]
+    fn calc_power_returns_expected_value() {
+        let mut result = calc_power(String::from(
+            "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green",
+        ));
+        assert_eq!(result, 48);
+
+        result = calc_power(String::from(
+            "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red",
+        ));
+        assert_eq!(result, 630);
     }
 }
