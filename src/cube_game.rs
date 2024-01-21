@@ -4,6 +4,23 @@ use std::{
     io::{BufRead, BufReader, Result},
 };
 
+/**
+Performs the algorithm described in the Day 2 Part 1 problem description. Accepts a path to the file containing the
+game data, as well as a HashMap containing the red/green/blue color limitations, and returns a sum of the game numbers
+for all of the games which were possible according to the provided limitations.
+
+# Examples
+
+```
+use std::collections::HashMap;
+use aoc_2023_rs::cube_game::*;
+
+let color_limits = HashMap::from([("red", 12), ("green", 13), ("blue", 14)]);
+let result = sum_valid_games("./src/day_2/example.txt", color_limits).unwrap();
+
+assert_eq!(result, 8);
+```
+*/
 pub fn sum_valid_games(path: &str, color_limits: HashMap<&str, u16>) -> Result<usize> {
     let mut sum = 0;
 
@@ -22,6 +39,10 @@ pub fn sum_valid_games(path: &str, color_limits: HashMap<&str, u16>) -> Result<u
     Ok(sum)
 }
 
+/**
+Determines if the provided game data (in raw string format) is valid or invalid according
+to the provided cube color limits.
+*/
 fn game_is_valid(data: String, color_limits: &HashMap<&str, u16>) -> bool {
     let trimmed_data = data.split(": ").collect::<Vec<_>>(); // ["Game 1", "3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green"]
     let reveals = trimmed_data[1].split("; ").collect::<Vec<_>>(); // ["3 blue, 4 red", "1 red, 2 green, 6 blue", "2 green"]
@@ -40,6 +61,19 @@ fn game_is_valid(data: String, color_limits: &HashMap<&str, u16>) -> bool {
     true
 }
 
+/**
+Performs the algorithm described in the Day 2 Part 2 problem description. Accepts a path to the file containing the
+game data, and returns a sum of all of the 'powers' of all of the games.
+
+# Examples
+
+```
+use aoc_2023_rs::cube_game::*;
+
+let result = sum_game_powers("./src/day_2/example.txt").unwrap();
+assert_eq!(result, 2286);
+```
+*/
 pub fn sum_game_powers(path: &str) -> Result<usize> {
     let mut sum = 0;
 
