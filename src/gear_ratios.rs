@@ -1,6 +1,6 @@
 use std::{
     collections::HashSet,
-    fs::File,
+    fs::{read, File},
     io::{BufRead, BufReader},
 };
 
@@ -11,6 +11,69 @@ struct PartNumber {
     end: u32,
 }
 
+/// This function solves the Part 2 problem. It works by reading in PartNumber data for 3 lines, and
+/// '*' symbol data for two lines. On each iteration, the symbols for the previous line are anaylzed (because
+/// you need the PartNumber data for the line you're currently on).
+pub fn calc_sum_of_gear_ratios(path: &str) -> u32 {
+    let mut sum = 0;
+
+    let file = File::open(path).unwrap();
+    let reader = BufReader::new(file);
+
+    let mut prev_prev_parts: Vec<PartNumber> = Vec::new();
+    let mut prev_parts: Vec<PartNumber> = Vec::new();
+    let mut prev_asterisks: Vec<u32> = Vec::new();
+
+    for line in reader.lines() {
+        let line = line.unwrap();
+        let curr_parts = get_part_numbers(&line);
+        for ast_pos in &prev_asterisks {
+            let mut found_parts: Vec<u32> = Vec::new();
+            let start = if *ast_pos == 0 { 0 } else { ast_pos - 1 };
+            let end = if *ast_pos == (line.len() - 1) as u32 {
+                line.len() as u32 - 1
+            } else {
+                ast_pos + 1
+            };
+            // check prev_prev parts
+            for part in &prev_prev_parts {
+                if part.start <= end && part.end >= start {
+                    found_parts.push(part.number);
+                }
+            }
+            // check prev_parts
+            for part in &prev_parts {
+                if part.start <= end && part.end >= start {
+                    found_parts.push(part.number);
+                }
+            }
+            // check curr_parts
+            for part in &curr_parts {
+                if part.start <= end && part.end >= start {
+                    found_parts.push(part.number);
+                }
+            }
+
+            if found_parts.len() == 2 {
+                sum += found_parts[0] * found_parts[1];
+            }
+        }
+
+        // update the collections before next iter
+        prev_asterisks.clear();
+        for (i, c) in line.chars().enumerate() {
+            if c == '*' {
+                prev_asterisks.push(i as u32);
+            }
+        }
+        prev_prev_parts = prev_parts;
+        prev_parts = curr_parts;
+    }
+
+    sum
+}
+
+/// This function solves the Part 1 problem
 pub fn calc_sum_of_part_numbers(path: &str) -> u32 {
     let mut sum = 0;
 
