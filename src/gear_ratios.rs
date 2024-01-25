@@ -1,6 +1,6 @@
 use std::{
     collections::HashSet,
-    fs::{read, File},
+    fs::File,
     io::{BufRead, BufReader},
 };
 
