@@ -50,6 +50,7 @@ pub fn sum_total_scratchcards(path: &str) -> usize {
     sum
 }
 
+/// Counts the number of matches for the given scratchcard data
 fn count_matches(line: &str) -> usize {
     let split_card_title: Vec<&str> = line.split(": ").collect();
     let split_winners: Vec<&str> = split_card_title[1].split(" | ").collect();
@@ -59,9 +60,7 @@ fn count_matches(line: &str) -> usize {
     let processed_actuals_string = split_winners[1].trim().replace("  ", " ");
     let actuals: HashSet<&str> = processed_actuals_string.split(" ").collect();
 
-    let intersection: HashSet<_> = winners.intersection(&actuals).collect();
-
-    intersection.len()
+    winners.intersection(&actuals).collect::<Vec<_>>().len()
 }
 
 #[cfg(test)]
