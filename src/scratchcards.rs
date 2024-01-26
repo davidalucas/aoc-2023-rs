@@ -1,7 +1,7 @@
 use std::{
     collections::{HashSet, VecDeque},
     fs::File,
-    io::{BufRead, BufReader, Result},
+    io::{BufRead, BufReader},
 };
 
 /// Performs the algorithm which solves the Part 1 problem
