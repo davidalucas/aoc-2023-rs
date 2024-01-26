@@ -1,9 +1,10 @@
 use std::{
-    collections::HashSet,
+    collections::{HashSet, VecDeque},
     fs::File,
     io::{BufRead, BufReader, Result},
 };
 
+/// Performs the algorithm which solves the Part 1 problem
 pub fn sum_total_winnings(path: &str) -> usize {
     let mut sum = 0;
 
@@ -15,6 +16,35 @@ pub fn sum_total_winnings(path: &str) -> usize {
             continue;
         }
         sum += 2usize.pow(matches as u32 - 1);
+    }
+
+    sum
+}
+
+/// Performs the algorithm which solves the Part 2 problem
+pub fn sum_total_scratchcards(path: &str) -> usize {
+    let mut sum = 0;
+    let mut queue: VecDeque<usize> = VecDeque::new();
+
+    let file = File::open(path).unwrap();
+    for line in BufReader::new(file).lines() {
+        let line = line.unwrap();
+        let curr_cards = match queue.pop_front() {
+            Some(i) => i + 1,
+            None => 1,
+        };
+        sum += curr_cards;
+        let matches = count_matches(line.as_str());
+        let mut count = 0;
+
+        while count < matches {
+            if let Some(e) = queue.get_mut(count) {
+                *e += curr_cards;
+            } else {
+                queue.push_back(curr_cards);
+            }
+            count += 1;
+        }
     }
 
     sum
