@@ -18,6 +18,7 @@ fn get_lowest_location_gets_answer_for_real_data() {
 fn almanac_from_file_works_for_example_data() {
     let actual = Almanac::from_file("./data/day_5/example.txt");
     let expected_seeds = vec![79, 14, 55, 13];
+    let expected_seed_ranges = vec![(79, 14), (55, 13)];
     let expected_maps = vec![
         vec![
             MapRange {
@@ -125,5 +126,6 @@ fn almanac_from_file_works_for_example_data() {
         ],
     ];
     assert_eq!(actual.seeds, expected_seeds);
+    assert_eq!(actual.seed_ranges, expected_seed_ranges);
     assert_eq!(actual.maps, expected_maps);
 }
