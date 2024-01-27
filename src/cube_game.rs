@@ -16,7 +16,7 @@ use std::collections::HashMap;
 use aoc_2023_rs::cube_game::*;
 
 let color_limits = HashMap::from([("red", 12), ("green", 13), ("blue", 14)]);
-let result = sum_valid_games("./src/day_2/example.txt", color_limits).unwrap();
+let result = sum_valid_games("./data/day_2/example.txt", color_limits).unwrap();
 
 assert_eq!(result, 8);
 ```
@@ -70,7 +70,7 @@ game data, and returns a sum of all of the 'powers' of all of the games.
 ```
 use aoc_2023_rs::cube_game::*;
 
-let result = sum_game_powers("./src/day_2/example.txt").unwrap();
+let result = sum_game_powers("./data/day_2/example.txt").unwrap();
 assert_eq!(result, 2286);
 ```
 */
