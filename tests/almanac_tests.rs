@@ -1,22 +1,22 @@
-use aoc_2023_rs::almanac::{Almanac, MapRange};
+use aoc_2023_rs::almanac::{map_range::MapRange, Almanac};
 
 #[test]
 fn get_lowest_location_gets_answer_for_example_data() {
-    let almanac = Almanac::from_file("./src/day_5/example.txt");
+    let almanac = Almanac::from_file("./data/day_5/example.txt");
     let actual = almanac.get_lowest_location();
     assert_eq!(actual, 35);
 }
 
 #[test]
 fn get_lowest_location_gets_answer_for_real_data() {
-    let almanac = Almanac::from_file("./src/day_5/data.txt");
+    let almanac = Almanac::from_file("./data/day_5/data.txt");
     let actual = almanac.get_lowest_location();
     assert_eq!(actual, 227653707);
 }
 
 #[test]
 fn almanac_from_file_works_for_example_data() {
-    let actual = Almanac::from_file("./src/day_5/example.txt");
+    let actual = Almanac::from_file("./data/day_5/example.txt");
     let expected_seeds = vec![79, 14, 55, 13];
     let expected_maps = vec![
         vec![
