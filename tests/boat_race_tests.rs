@@ -29,3 +29,17 @@ fn calc_charging_times_works_for_real_data() {
 
     assert_eq!(result, 138915);
 }
+
+#[test]
+fn calc_charging_times_works_for_example_data2() {
+    let charging_times = calc_charging_times(71530, 940200);
+    let actual = charging_times.1 - charging_times.0 + 1;
+    assert_eq!(actual, 71503);
+}
+
+#[test]
+fn calc_charging_times_works_for_real_data2() {
+    let charging_times = calc_charging_times(46689866, 358105418071080);
+    let actual = charging_times.1 - charging_times.0 + 1;
+    assert_eq!(actual, 27340847);
+}
