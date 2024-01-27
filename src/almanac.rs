@@ -9,6 +9,7 @@ use map_range::*;
 
 pub struct Almanac {
     pub seeds: Vec<i64>,
+    pub seed_ranges: Vec<(i64, i64)>,
     pub maps: Vec<Vec<MapRange>>,
 }
 
@@ -17,7 +18,9 @@ impl Almanac {
         let file = File::open(path).unwrap();
         let mut lines = BufReader::new(file).lines();
 
-        let seeds = parse_seeds(lines.next().unwrap().unwrap());
+        let seed_line = lines.next().unwrap().unwrap();
+        let seeds = parse_seeds(&seed_line);
+        let seed_ranges = parse_seed_ranges(&seed_line);
         lines.next(); //progress one line
 
         let mut maps: Vec<Vec<MapRange>> = Vec::new();
@@ -38,7 +41,11 @@ impl Almanac {
         maps.push(make_map_ranges(&range_stack));
         range_stack.clear();
 
-        Almanac { seeds, maps }
+        Almanac {
+            seeds,
+            seed_ranges,
+            maps,
+        }
     }
 
     pub fn get_lowest_location(&self) -> i64 {
@@ -65,7 +72,7 @@ impl Almanac {
     }
 }
 
-fn parse_seeds(line: String) -> Vec<i64> {
+fn parse_seeds(line: &str) -> Vec<i64> {
     let seeds_str = &line["seeds: ".len()..];
     seeds_str
         .split(" ")
@@ -108,7 +115,7 @@ mod tests {
 
     #[test]
     fn parse_seeds_works_as_expected() {
-        let line = String::from("seeds: 79 14 55 13");
+        let line = "seeds: 79 14 55 13";
         let expected = Vec::from([79, 14, 55, 13]);
         let actual = parse_seeds(line);
 
