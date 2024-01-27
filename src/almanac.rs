@@ -48,6 +48,7 @@ impl Almanac {
         }
     }
 
+    /// Solves the Day 5 Part 1 problem
     pub fn get_lowest_location(&self) -> i64 {
         let mut lowest = i64::MAX;
 
@@ -65,6 +66,52 @@ impl Almanac {
             }
             if source < lowest {
                 lowest = source;
+            }
+        }
+
+        lowest
+    }
+
+    /// Solves Day 5 Part 2 problem
+    pub fn get_lowest_location_ranged(&self) -> i64 {
+        let mut lowest = i64::MAX;
+
+        for (seed, range) in &self.seed_ranges {
+            let mut source = *seed;
+
+            while source < seed + range {
+                let mut curr_source = source;
+                let mut curr_range = range - (curr_source - seed);
+                for map in &self.maps {
+                    let found = map.binary_search_by(|m| m.cmp(curr_source));
+                    match found {
+                        Ok(i) => {
+                            let found_map = map.get(i).unwrap();
+                            let offset = curr_source - found_map.source;
+                            let found_map_adj_range = found_map.range - offset;
+
+                            curr_source = found_map.destination + offset;
+                            if found_map_adj_range < curr_range {
+                                curr_range = found_map_adj_range
+                            }
+                        }
+                        Err(i) => {
+                            if i == map.len() {
+                                continue;
+                            }
+
+                            let found_map = map.get(i).unwrap();
+                            let found_map_adj_range = found_map.source - curr_source;
+                            if found_map_adj_range < curr_range {
+                                curr_range = found_map_adj_range;
+                            }
+                        }
+                    }
+                }
+                if curr_source < lowest {
+                    lowest = curr_source;
+                }
+                source += curr_range;
             }
         }
 

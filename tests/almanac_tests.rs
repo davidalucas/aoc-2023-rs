@@ -15,6 +15,20 @@ fn get_lowest_location_gets_answer_for_real_data() {
 }
 
 #[test]
+fn get_lowest_location_ranged_gets_answer_for_example_data() {
+    let almanac = Almanac::from_file("./data/day_5/example.txt");
+    let actual = almanac.get_lowest_location_ranged();
+    assert_eq!(actual, 46);
+}
+
+#[test]
+fn get_lowest_location_ranged_gets_answer_for_real_data() {
+    let almanac = Almanac::from_file("./data/day_5/data.txt");
+    let actual = almanac.get_lowest_location_ranged();
+    assert_eq!(actual, 78775051);
+}
+
+#[test]
 fn almanac_from_file_works_for_example_data() {
     let actual = Almanac::from_file("./data/day_5/example.txt");
     let expected_seeds = vec![79, 14, 55, 13];
