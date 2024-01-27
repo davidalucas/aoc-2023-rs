@@ -74,6 +74,21 @@ fn parse_seeds(line: String) -> Vec<i64> {
         .collect()
 }
 
+fn parse_seed_ranges(line: &str) -> Vec<(i64, i64)> {
+    let seeds_strings = &line["seeds: ".len()..].split(" ").collect::<Vec<&str>>();
+    let mut seed_ranges = Vec::new();
+    let mut count = 0;
+
+    while count < seeds_strings.len() {
+        let start = seeds_strings.get(count).unwrap().parse().unwrap();
+        let range = seeds_strings.get(count + 1).unwrap().parse().unwrap();
+        seed_ranges.push((start, range));
+        count += 2;
+    }
+
+    seed_ranges
+}
+
 /// Takes in a queue of MapRange strings and returns a Vec<MapRange>, sorted by their
 /// 'source' fields.
 fn make_map_ranges(range_stack: &VecDeque<String>) -> Vec<MapRange> {
@@ -96,6 +111,15 @@ mod tests {
         let line = String::from("seeds: 79 14 55 13");
         let expected = Vec::from([79, 14, 55, 13]);
         let actual = parse_seeds(line);
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn parse_seed_ranges_works_as_expected() {
+        let line = "seeds: 79 14 55 13";
+        let expected = Vec::from([(79, 14), (55, 13)]);
+        let actual = parse_seed_ranges(line);
 
         assert_eq!(actual, expected);
     }
