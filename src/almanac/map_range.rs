@@ -8,6 +8,15 @@ pub struct MapRange {
 }
 
 impl MapRange {
+    pub fn from(data: &str) -> MapRange {
+        let split_str: Vec<&str> = data.split(" ").collect();
+        MapRange {
+            source: split_str[1].parse().unwrap(),
+            destination: split_str[0].parse().unwrap(),
+            range: split_str[2].parse().unwrap(),
+        }
+    }
+
     pub fn cmp(&self, source: i64) -> Ordering {
         if source - self.source < 0 {
             return Ordering::Greater;
@@ -21,6 +30,17 @@ impl MapRange {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn from_works_as_expected() {
+        let expected = MapRange {
+            source: 98,
+            destination: 50,
+            range: 2,
+        };
+        let actual = MapRange::from("50 98 2");
+        assert_eq!(actual, expected);
+    }
 
     #[test]
     fn maprange_cmp_works_as_expected() {

@@ -79,14 +79,7 @@ fn parse_seeds(line: String) -> Vec<i64> {
 fn make_map_ranges(range_stack: &VecDeque<String>) -> Vec<MapRange> {
     let mut ranges = range_stack
         .iter()
-        .map(|s| {
-            let split_str: Vec<&str> = s.as_str().split(" ").collect();
-            MapRange {
-                source: split_str[1].parse().unwrap(),
-                destination: split_str[0].parse().unwrap(),
-                range: split_str[2].parse().unwrap(),
-            }
-        })
+        .map(|s| MapRange::from(&s))
         .collect::<Vec<MapRange>>();
     ranges.sort_by(|a, b| a.source.cmp(&b.source));
     ranges
