@@ -2,7 +2,6 @@ use std::collections::HashMap;
 
 pub struct Hand {
     pub bid: u64,
-    pub cards: Vec<char>,
     pub score: u64,
 }
 
@@ -14,11 +13,7 @@ impl Hand {
         let cards = split_s.get(0).unwrap();
         let score = calc_hand_score(*cards, card_values);
 
-        Hand {
-            bid,
-            cards: Vec::new(),
-            score,
-        }
+        Hand { bid, score }
     }
 }
 
