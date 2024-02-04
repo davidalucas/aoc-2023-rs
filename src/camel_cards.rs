@@ -7,12 +7,12 @@ pub struct Hand {
 }
 
 impl Hand {
-    pub fn from_str(s: &str, card_values: &HashMap<char, u8>) -> Hand {
+    pub fn from_str(s: &str, card_values: &HashMap<char, u8>, use_jokers: bool) -> Hand {
         let split_s: Vec<&str> = s.split(" ").collect();
 
         let bid: u64 = split_s.get(1).unwrap().parse().unwrap();
         let cards = split_s.get(0).unwrap();
-        let score = calc_hand_score(*cards, card_values);
+        let score = calc_hand_score(*cards, card_values, use_jokers);
 
         Hand { bid, score }
     }
@@ -23,7 +23,7 @@ impl Hand {
     }
 }
 
-fn calc_hand_score(cards: &str, card_values: &HashMap<char, u8>) -> u64 {
+fn calc_hand_score(cards: &str, card_values: &HashMap<char, u8>, use_jokers: bool) -> u64 {
     let mut score = 0;
     let card_chars: Vec<char> = cards.chars().collect();
     let mut card_map: HashMap<char, u8> = HashMap::new();
@@ -41,12 +41,27 @@ fn calc_hand_score(cards: &str, card_values: &HashMap<char, u8>) -> u64 {
     let max_score = (cards.len() - 1) + (card_values.len().pow(cards.len() as u32));
     let multiplier = max_score.to_string().len();
 
-    score + calc_bonus_score(card_map) * 10_u64.pow(multiplier as u32)
+    score + calc_bonus_score(card_map, use_jokers) * 10_u64.pow(multiplier as u32)
 }
 
-fn calc_bonus_score(card_map: HashMap<char, u8>) -> u64 {
+fn calc_bonus_score(mut card_map: HashMap<char, u8>, use_jokers: bool) -> u64 {
+    let mut num_jokers = 0;
+    if use_jokers {
+        num_jokers = match card_map.remove(&'J') {
+            Some(x) => x,
+            None => 0,
+        };
+        if num_jokers == 5 {
+            return 6;
+        }
+    }
+
     let mut matches: Vec<u8> = card_map.values().cloned().collect();
     matches.sort_by(|a, b| b.cmp(a)); // sort in descending order
+
+    if use_jokers {
+        matches[0] = matches[0] + num_jokers;
+    }
 
     match matches[0] {
         5 => return 6,
@@ -88,35 +103,35 @@ mod tests {
             ('3', 2),
             ('2', 1),
         ]);
-        let score = calc_hand_score("32T3K", &card_values); // one pair, 1x multiplier
+        let score = calc_hand_score("32T3K", &card_values, false); // one pair, 1x multiplier
         assert_eq!(score, 1060888);
 
-        let score = calc_hand_score("KK677", &card_values); // two pair, 2x multiplier
+        let score = calc_hand_score("KK677", &card_values, false); // two pair, 2x multiplier
         assert_eq!(score, 2370035);
     }
 
     #[test]
     fn calc_bonus_score_returns_expected_results() {
         let card_map: HashMap<char, u8> = HashMap::from([('A', 5)]);
-        assert_eq!(calc_bonus_score(card_map), 6);
+        assert_eq!(calc_bonus_score(card_map, false), 6);
 
         let card_map: HashMap<char, u8> = HashMap::from([('A', 4), ('K', 1)]);
-        assert_eq!(calc_bonus_score(card_map), 5);
+        assert_eq!(calc_bonus_score(card_map, false), 5);
 
         let card_map: HashMap<char, u8> = HashMap::from([('A', 3), ('K', 2)]);
-        assert_eq!(calc_bonus_score(card_map), 4);
+        assert_eq!(calc_bonus_score(card_map, false), 4);
 
         let card_map: HashMap<char, u8> = HashMap::from([('A', 3), ('K', 1), ('Q', 1)]);
-        assert_eq!(calc_bonus_score(card_map), 3);
+        assert_eq!(calc_bonus_score(card_map, false), 3);
 
         let card_map: HashMap<char, u8> = HashMap::from([('A', 2), ('K', 2), ('Q', 1)]);
-        assert_eq!(calc_bonus_score(card_map), 2);
+        assert_eq!(calc_bonus_score(card_map, false), 2);
 
         let card_map: HashMap<char, u8> = HashMap::from([('A', 2), ('K', 1), ('Q', 1), ('J', 1)]);
-        assert_eq!(calc_bonus_score(card_map), 1);
+        assert_eq!(calc_bonus_score(card_map, false), 1);
 
         let card_map: HashMap<char, u8> =
             HashMap::from([('A', 1), ('K', 1), ('Q', 1), ('J', 1), ('T', 1)]);
-        assert_eq!(calc_bonus_score(card_map), 0);
+        assert_eq!(calc_bonus_score(card_map, false), 0);
     }
 }
