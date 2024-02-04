@@ -7,7 +7,7 @@ pub struct Hand {
 }
 
 impl Hand {
-    pub fn from_str(s: &str, card_values: HashMap<char, u8>) -> Hand {
+    pub fn from_str(s: &str, card_values: &HashMap<char, u8>) -> Hand {
         let split_s: Vec<&str> = s.split(" ").collect();
 
         let bid: u64 = split_s.get(1).unwrap().parse().unwrap();
@@ -23,7 +23,7 @@ impl Hand {
     }
 }
 
-fn calc_hand_score(cards: &str, card_values: HashMap<char, u8>) -> u64 {
+fn calc_hand_score(cards: &str, card_values: &HashMap<char, u8>) -> u64 {
     let mut score = 0;
     let card_chars: Vec<char> = cards.chars().collect();
     let mut card_map: HashMap<char, u8> = HashMap::new();
@@ -88,10 +88,10 @@ mod tests {
             ('3', 2),
             ('2', 1),
         ]);
-        let score = calc_hand_score("32T3K", card_values.clone()); // one pair, 1x multiplier
+        let score = calc_hand_score("32T3K", &card_values); // one pair, 1x multiplier
         assert_eq!(score, 1060888);
 
-        let score = calc_hand_score("KK677", card_values.clone()); // two pair, 2x multiplier
+        let score = calc_hand_score("KK677", &card_values); // two pair, 2x multiplier
         assert_eq!(score, 2370035);
     }
 
