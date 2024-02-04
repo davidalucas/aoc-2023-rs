@@ -1,5 +1,6 @@
-use std::collections::HashMap;
+use std::{cmp::Ordering, collections::HashMap};
 
+#[derive(Debug, PartialEq)]
 pub struct Hand {
     pub bid: u64,
     pub score: u64,
@@ -14,6 +15,11 @@ impl Hand {
         let score = calc_hand_score(*cards, card_values);
 
         Hand { bid, score }
+    }
+
+    /// Compares this card hand with another hand, based on their scores.
+    pub fn cmp(&self, other: &Hand) -> Ordering {
+        self.score.cmp(&other.score)
     }
 }
 
